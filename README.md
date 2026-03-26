@@ -6,9 +6,17 @@ A [ClawHub](https://clawhub.ai/rgstephens/poeusage-skill) skill for monitoring y
 
 ## Installation
 
+> **Note:** Installation adds the third-party Homebrew tap `rgstephens/tap` and installs the `poeusage` binary from it. Review the tap source at [rgstephens/homebrew-tap](https://github.com/rgstephens/homebrew-tap) before installing if you have concerns.
+
 ```bash
 brew tap rgstephens/tap
 brew install poeusage
+```
+
+A **Poe API key** (`POE_API_KEY`) is required. Set it before use:
+
+```bash
+export POE_API_KEY=your_key_here
 ```
 
 ## Commands
