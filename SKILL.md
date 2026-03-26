@@ -10,10 +10,7 @@ metadata:
       bins:
         - poeusage
       env:
-        - name: POE_API_KEY
-          description: Poe API key used to authenticate requests to the Poe API
-          required: true
-          secret: true
+        - POE_API_KEY
     install:
       - kind: brew
         tap: rgstephens/tap
