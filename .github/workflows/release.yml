@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Update version in SKILL.md
+        run: |
+          sed -i "s/^version: .*/version: ${{ steps.version.outputs.version }}/" SKILL.md
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add SKILL.md
+          git diff --staged --quiet || git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git push origin main
+
+      - name: Publish to ClawHub
+        env:
+          CLAWHUB_API_TOKEN: ${{ secrets.CLAWHUB_API_TOKEN }}
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+
+          SKILL_SIZE=$(wc -c < SKILL.md | tr -d ' ')
+          SKILL_SHA=$(sha256sum SKILL.md | cut -d' ' -f1)
+
+          PAYLOAD=$(printf '{"slug":"poeusage","displayName":"Poe Usage","version":"%s","changelog":"","tags":["poe","usage","token","cost"],"acceptLicenseTerms":true,"files":[{"path":"SKILL.md","size":%s,"sha256":"%s","contentType":"text/markdown"}]}' \
+            "$VERSION" "$SKILL_SIZE" "$SKILL_SHA")
+
+          curl -sSL -X POST \
+            -H "Authorization: Bearer $CLAWHUB_API_TOKEN" \
+            -F "payload=$PAYLOAD" \
+            -F "files=@SKILL.md;type=text/markdown" \
+            "https://clawhub.ai/api/v1/skills"
