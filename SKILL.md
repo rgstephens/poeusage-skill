@@ -1,7 +1,7 @@
 ---
 name: poeusage
 description: Monitor Poe API point balance and usage history from the terminal using poeusage CLI.
-version: 0.3.0
+version: 0.3.1
 metadata:
   openclaw:
     emoji: "📊"
@@ -23,7 +23,7 @@ metadata:
 ---
 
 slug: poeusage
-version: 0.3.0
+version: 0.3.1
 
 A ClawHub skill for monitoring Poe API point balance and usage history via the `poeusage` CLI.
 
